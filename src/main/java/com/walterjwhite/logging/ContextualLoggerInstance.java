@@ -32,7 +32,7 @@ public class ContextualLoggerInstance extends LoggerInstance {
         logger,
         callTemplate + contextualTemplate,
         getMethodName(),
-        ArgumentUtil.getArguments(proceedingJoinPoint.getArgs(), numberOfArguments),
+        ArgumentUtil.getArguments(isSensitive, proceedingJoinPoint.getArgs(), numberOfArguments),
         contextualData);
   }
 
@@ -41,8 +41,8 @@ public class ContextualLoggerInstance extends LoggerInstance {
         logger,
         resultTemplate + contextualTemplate,
         getMethodName(),
-        ArgumentUtil.getArguments(proceedingJoinPoint.getArgs(), numberOfArguments),
-        ArgumentUtil.getArgument(result, numberOfArguments),
+        ArgumentUtil.getArguments(isSensitive, proceedingJoinPoint.getArgs(), numberOfArguments),
+        ArgumentUtil.getArgument(isSensitive, result, numberOfArguments),
         getRuntime(),
         contextualData);
   }

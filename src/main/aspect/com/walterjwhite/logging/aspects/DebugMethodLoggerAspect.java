@@ -12,13 +12,13 @@ import org.aspectj.lang.annotation.Aspect;
 public class DebugMethodLoggerAspect {
   // log all protected invocations at debug level, exclude (this framework, constructors)
   @Around(
-      "execution(protected * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && !within(@ContextualLoggable *) && !within(@NonLoggable *)")
+      "execution(protected * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && !within(@ContextualLoggable *) && !within(@NonLoggable *) && !within(*..*$AjcClosure*) && !execution(* *lambda$*(..))")
   public Object doProtectedAround(ProceedingJoinPoint point) throws Throwable {
     return (new LoggerInstance(point, LogLevel.DEBUG).doAround());
   }
 
   @Around(
-      "execution(protected * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && within(@ContextualLoggable *) && !within(@NonLoggable *)")
+      "execution(protected * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && within(@ContextualLoggable *) && !within(@NonLoggable *) && !within(*..*$AjcClosure*) && !execution(* *lambda$*(..))")
   public Object doContextualProtectedAround(ProceedingJoinPoint point) throws Throwable {
     return (new ContextualLoggerInstance(point, LogLevel.DEBUG).doAround());
   }

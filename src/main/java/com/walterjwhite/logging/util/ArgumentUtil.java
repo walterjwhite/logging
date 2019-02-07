@@ -6,14 +6,20 @@ import java.util.Arrays;
 public class ArgumentUtil {
   public static final int NUMBER_OF_ARGUMENTS_TO_LOG = 3;
 
+  // *SHOULD* be fixed in newer versions of hibernate
+  // TODO: avoid hard-coding this, avoid dependencies on other libraries ...
+  public static String[] AVOID_TO_STRING_CLASSES =
+      new String[] {"javax.persistence.EntityManager", "org.hibernate.internal.SessionImpl"};
+
   private ArgumentUtil() {}
 
-  public static Object getArgument(Object argument, final int numberOfArguments) {
+  public static Object getArgument(
+      final boolean isSensitive, Object argument, final int numberOfArguments) {
     if (argument == null) return null;
 
     for (final ArgumentType argumentType : ArgumentType.values()) {
-      if (argumentType.getArgumentType().isAssignableFrom(argument.getClass())) {
-        return argumentType.format(argument, numberOfArguments);
+      if (argumentType.supports(argument.getClass())) {
+        return argumentType.format(isSensitive, argument, numberOfArguments);
       }
     }
 
@@ -21,10 +27,14 @@ public class ArgumentUtil {
   }
 
   public static Object[] getArguments(
-      final Object[] arguments, final Object[] contextual, int numberOfArguments) {
+      final boolean isSensitive,
+      final Object[] arguments,
+      final Object[] contextual,
+      int numberOfArguments) {
     int argumentLength = getArgumentLength(arguments, numberOfArguments);
     final Object[] data = Arrays.copyOf(arguments, argumentLength + contextual.length);
-    for (int i = 0; i < argumentLength; i++) data[i] = getArgument(arguments[i], numberOfArguments);
+    for (int i = 0; i < argumentLength; i++)
+      data[i] = getArgument(isSensitive, arguments[i], numberOfArguments);
 
     for (int i = 0; i < contextual.length; i++) {
       data[argumentLength + i] = contextual[i];
@@ -33,13 +43,15 @@ public class ArgumentUtil {
     return (data);
   }
 
-  public static Object[] getArguments(final Object[] arguments, int numberOfArguments) {
+  public static Object[] getArguments(
+      final boolean isSensitive, final Object[] arguments, int numberOfArguments) {
     if (arguments == null || arguments.length == 0) return null;
 
     int argumentLength = getArgumentLength(arguments, numberOfArguments);
 
     final Object[] data = new Object[argumentLength];
-    for (int i = 0; i < argumentLength; i++) data[i] = getArgument(arguments[i], numberOfArguments);
+    for (int i = 0; i < argumentLength; i++)
+      data[i] = getArgument(isSensitive, arguments[i], numberOfArguments);
 
     return (data);
   }
@@ -63,6 +75,19 @@ public class ArgumentUtil {
       return "first " + arguments.length + "(" + String.join(",", arguments) + ")";
     }
 
-    return "(" + String.join(",", arguments) + ")";
+    if (arguments.length > 1) return "(" + String.join(",", arguments) + ")";
+
+    if (arguments.length == 1) return arguments[0];
+
+    return "VOID";
+  }
+
+  public static String format(final Object element, final boolean isSensitive) {
+    if (element == null) return "null";
+
+    if (Arrays.binarySearch(ArgumentUtil.AVOID_TO_STRING_CLASSES, element.getClass().getName())
+        == -1) return SensitiveUtil.format(element.toString(), isSensitive);
+
+    return element.getClass() + "@" + element.hashCode();
   }
 }

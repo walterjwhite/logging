@@ -1,55 +1,46 @@
 package com.walterjwhite.logging;
 
-import com.walterjwhite.logging.util.ArgumentUtil;
+import com.walterjwhite.logging.formatter.*;
+import com.walterjwhite.logging.formatter.primitive.*;
 import java.util.Collection;
-import java.util.Iterator;
 
 public enum ArgumentType {
-  CollectionArgument(Collection.class) {
-    @Override
-    public Object format(Object input, int numberOfArguments) {
-      final String[] out = new String[numberOfArguments];
-      final Iterator<Object> iterator = ((Collection) input).iterator();
+  ByteArrayArgument(ByteArrayFormatter.class, byte[].class),
+  IntArrayArgument(IntArrayFormatter.class, int[].class),
+  DoubleArrayArgument(DoubleArrayFormatter.class, double[].class),
+  FloatArrayArgument(FloatArrayFormatter.class, float[].class),
+  CharArrayArgument(CharArrayFormatter.class, char[].class),
+  LongArrayArgument(LongArrayFormatter.class, long[].class),
+  ShortArrayArgument(ShortArrayFormatter.class, short[].class),
+  BooleanArrayArgument(BooleanArrayFormatter.class, boolean[].class),
+  CollectionArgument(CollectionFormatter.class, Collection.class),
+  ObjectArrayArgument(ObjectArrayFormatter.class, Object[].class),
+  ObjectArgument(ObjectFormatter.class, Object.class);
 
-      int i = 0;
-      for (; i < numberOfArguments && iterator.hasNext(); i++) {
-        out[i] = iterator.next().toString();
-      }
+  private final Class[] argumentTypes;
+  private final Class<? extends ArgumentFormatter> argumentFormatterClass;
 
-      return ArgumentUtil.formatOutput(
-          ArgumentUtil.trim(out, i, numberOfArguments), iterator.hasNext());
-    }
-  },
-  ObjectArrayArgument(Object[].class) {
-    @Override
-    public Object format(Object input, int numberOfArguments) {
-      final Object[] inputArray = (Object[]) input;
+  public boolean supports(final Class argumentClass) {
+    for (final Class argumentType : argumentTypes)
+      if (argumentType.isAssignableFrom(argumentClass)) return true;
 
-      String[] out = new String[numberOfArguments];
-
-      for (int i = 0; i < numberOfArguments && i < inputArray.length; i++) {
-        out[i] = inputArray[i].toString();
-      }
-
-      return ArgumentUtil.formatOutput(out, inputArray.length > numberOfArguments);
-    }
-  },
-  ObjectArgument(Object.class) {
-    @Override
-    public Object format(Object input, int numberOfArguments) {
-      return input;
-    }
-  };
-
-  private final Class argumentType;
-
-  public Class getArgumentType() {
-    return argumentType;
+    return false;
   }
 
-  ArgumentType(Class argumentType) {
-    this.argumentType = argumentType;
+  ArgumentType(
+      final Class<? extends ArgumentFormatter> argumentFormatterClass,
+      final Class... argumentTypes) {
+    this.argumentTypes = argumentTypes;
+    this.argumentFormatterClass = argumentFormatterClass;
   }
 
-  public abstract Object format(final Object input, final int numberOfArguments);
+  public Object format(final boolean isSensitive, final Object input, final int numberOfArguments) {
+    try {
+      final ArgumentFormatter argumentFormatter = argumentFormatterClass.newInstance();
+
+      return argumentFormatter.format(input, numberOfArguments, isSensitive);
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new FormatterConfigurationException(e);
+    }
+  }
 }
