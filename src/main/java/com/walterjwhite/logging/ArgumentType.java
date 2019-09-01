@@ -3,6 +3,7 @@ package com.walterjwhite.logging;
 import com.walterjwhite.logging.formatter.*;
 import com.walterjwhite.logging.formatter.primitive.*;
 import java.util.Collection;
+import java.util.Map;
 
 public enum ArgumentType {
   ByteArrayArgument(ByteArrayFormatter.class, byte[].class),
@@ -14,6 +15,7 @@ public enum ArgumentType {
   ShortArrayArgument(ShortArrayFormatter.class, short[].class),
   BooleanArrayArgument(BooleanArrayFormatter.class, boolean[].class),
   CollectionArgument(CollectionFormatter.class, Collection.class),
+  MapArgument(MapFormatter.class, Map.class),
   ObjectArrayArgument(ObjectArrayFormatter.class, Object[].class),
   ObjectArgument(ObjectFormatter.class, Object.class);
 
