@@ -89,7 +89,6 @@ public class LoggerInstance {
     return !rateLimiter.tryAcquire();
   }
 
-  /** Logs the call before the actual invocation. */
   protected void logCall() {
     if (isVoidArgument) argument = VOID_TEMPLATE;
     else
@@ -99,7 +98,6 @@ public class LoggerInstance {
     level.log(logger, callTemplate, getMethodName(), argument);
   }
 
-  /** Logs the result of the actual invocation (including runtime). */
   protected void logResult(final Object result) {
     final Object formattedResult;
     if (isVoidReturn) formattedResult = VOID_TEMPLATE;
