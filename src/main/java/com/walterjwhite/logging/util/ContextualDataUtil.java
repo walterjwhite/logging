@@ -5,11 +5,10 @@ import com.walterjwhite.logging.annotation.ContextualLoggableField;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ContextualDataUtil {
+  private ContextualDataUtil() {}
+
   public static Object[] getContextual(final Object target, final Class targetClass) {
     if (target != null) {
       final ContextualLoggable contextualLoggable =

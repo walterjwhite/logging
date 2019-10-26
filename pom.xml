@@ -110,6 +110,6 @@
     <tag>java-0.0.16</tag>
   </scm>
   <properties>
-    <aspectj.version>1.9.2</aspectj.version>
+    <aspectj.version>1.9.4</aspectj.version>
   </properties>
 </project>

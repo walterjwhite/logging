@@ -72,15 +72,10 @@ public class LoggerInstance {
 
     logCall();
 
-    try {
-      Object result = proceedingJoinPoint.proceed();
-      logResult(result);
+    final Object result = proceedingJoinPoint.proceed();
+    logResult(result);
 
-      return result;
-    } catch (Throwable t) {
-      logger.error("unexpected exception", t);
-      throw (t);
-    }
+    return result;
   }
 
   protected boolean isRateLimited() {

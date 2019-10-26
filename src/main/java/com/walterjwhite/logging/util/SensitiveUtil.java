@@ -1,10 +1,8 @@
 package com.walterjwhite.logging.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SensitiveUtil {
+  private SensitiveUtil() {}
+
   // TODO: do not hard-code this and do not depend on external libraries
   public static final int OUTPUT_LENGTH = 80;
   // TODO: do not hard-code this and do not depend on external libraries

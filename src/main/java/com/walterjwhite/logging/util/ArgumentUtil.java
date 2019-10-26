@@ -23,7 +23,7 @@ public class ArgumentUtil {
       }
     }
 
-    throw (new IllegalArgumentException(argument.getClass() + " is not supported"));
+    throw new IllegalArgumentException(argument.getClass() + " is not supported");
   }
 
   public static Object[] getArguments(
