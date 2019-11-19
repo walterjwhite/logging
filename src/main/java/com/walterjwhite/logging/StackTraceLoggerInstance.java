@@ -16,9 +16,12 @@ public class StackTraceLoggerInstance {
   protected final Throwable throwable;
 
   public StackTraceLoggerInstance(JoinPoint joinPoint) {
+    this(joinPoint, (Throwable) joinPoint.getArgs()[0]);
+  }
 
+  public StackTraceLoggerInstance(final JoinPoint joinPoint, final Throwable throwable) {
     this.joinPoint = joinPoint;
-    this.throwable = (Throwable) joinPoint.getArgs()[0];
+    this.throwable = throwable;
     this.level = LoggingUtil.getLevelForException(joinPoint, LogLevel.ERROR);
     this.logger = LoggingUtil.getLogger(joinPoint);
   }
@@ -34,8 +37,11 @@ public class StackTraceLoggerInstance {
   private static String getStackTrace(final Throwable throwable) {
     final StringBuilder buffer = new StringBuilder();
 
-    buffer.append(throwable.getMessage());
-    buffer.append("\n");
+    if (throwable.getMessage() != null) {
+      buffer.append(throwable.getMessage());
+      buffer.append("\n");
+    }
+
     for (final StackTraceElement stackTraceElement : throwable.getStackTrace()) {
       buffer.append("\t" + stackTraceElement.toString() + "\n");
     }

@@ -11,13 +11,13 @@ import org.aspectj.lang.annotation.Aspect;
 @Aspect
 public class InfoMethodLoggerAspect {
   @Around(
-      "execution(public * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && !within(@ContextualLoggable *) && !within(@NonLoggable *) && !execution(void set*(..)) && !execution(!void get*()) && !execution(int hashCode(..)) && !execution(boolean equals(..)) && !execution(boolean is*()) && !execution(String toString()) && !within(*..*$AjcClosure*) && !execution(* *lambda$*(..))")
+      "execution(public * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && !@annotation(com.walterjwhite.logging.annotation.ContextualLoggable) && !@annotation(com.walterjwhite.logging.annotation.NonLoggable) && !execution(void set*(..)) && !execution(!void get*()) && !execution(int hashCode(..)) && !execution(boolean equals(..)) && !execution(boolean is*()) && !execution(String toString()) && !within(*..*$AjcClosure*) && !execution(* *lambda$*(..))")
   public Object doPublicAround(ProceedingJoinPoint point) throws Throwable {
     return (new LoggerInstance(point, LogLevel.INFO).doAround());
   }
 
   @Around(
-      "execution(public * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && within(@ContextualLoggable *) && !within(@NonLoggable *) && !execution(void set*(..)) && !execution(!void get*()) && !execution(int hashCode(..)) && !execution(boolean equals(..)) && !execution(boolean is*()) && !execution(String toString()) && !within(*..*$AjcClosure*) && !execution(* *lambda$*(..))")
+      "execution(public * *(..)) && !within(com.walterjwhite.logging..*) && !call(*.new(..)) && @annotation(com.walterjwhite.logging.annotation.ContextualLoggable) && !@annotation(com.walterjwhite.logging.annotation.NonLoggable) && !execution(void set*(..)) && !execution(!void get*()) && !execution(int hashCode(..)) && !execution(boolean equals(..)) && !execution(boolean is*()) && !execution(String toString()) && !within(*..*$AjcClosure*) && !execution(* *lambda$*(..))")
   public Object doContextualPublicAround(ProceedingJoinPoint point) throws Throwable {
     return (new ContextualLoggerInstance(point, LogLevel.INFO).doAround());
   }

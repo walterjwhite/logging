@@ -2,6 +2,7 @@ package com.walterjwhite.logging;
 
 import com.walterjwhite.logging.formatter.*;
 import com.walterjwhite.logging.formatter.primitive.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -38,10 +39,14 @@ public enum ArgumentType {
 
   public Object format(final boolean isSensitive, final Object input, final int numberOfArguments) {
     try {
-      final ArgumentFormatter argumentFormatter = argumentFormatterClass.newInstance();
+      final ArgumentFormatter argumentFormatter =
+          argumentFormatterClass.getDeclaredConstructor().newInstance();
 
       return argumentFormatter.format(input, numberOfArguments, isSensitive);
-    } catch (InstantiationException | IllegalAccessException e) {
+    } catch (InstantiationException
+        | IllegalAccessException
+        | NoSuchMethodException
+        | InvocationTargetException e) {
       throw new FormatterConfigurationException(e);
     }
   }

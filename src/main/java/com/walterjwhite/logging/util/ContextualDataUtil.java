@@ -54,6 +54,8 @@ public class ContextualDataUtil {
   }
 
   public static String getContextualTemplate(final Object[] data) {
+    if (data == null) return "null";
+
     final StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < data.length; i++) {
       buffer.append("{}");
